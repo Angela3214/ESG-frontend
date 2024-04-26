@@ -1,0 +1,30 @@
+image: docker:stable
+variables:
+  PROJECT: 'index-ai-frontend'
+stages:
+  - Build Image
+  - Docker Run
+
+job build main:
+  stage: Build Image
+  resource_group: master
+  tags:
+    - docker
+  only:
+    - master
+  script:
+    - docker build --force-rm -t $DOCKER_REGISTRY/$PROJECT:prod ./
+    - docker push $DOCKER_REGISTRY/$PROJECT:prod
+
+job run main:
+  stage: Docker Run
+  image: 'registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image'
+  resource_group: master
+  environment: production
+  tags:
+    - kube
+  only:
+    - master
+  script:
+    - kubectl delete -f ./$PROJECT.yaml || true
+    - kubectl apply -f ./$PROJECT.yaml
