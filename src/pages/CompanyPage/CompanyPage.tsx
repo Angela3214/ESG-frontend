@@ -61,7 +61,7 @@ export const CompanyPage = () => {
     return null;
   }, [aggregatedData]);
 
-  const loading =
+  const loading=
     loadingBanks ||
     loadingBrokers ||
     loadingInsurances ||

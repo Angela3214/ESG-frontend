@@ -4,13 +4,13 @@ import React from 'react';
 import dayjs from 'dayjs';
 import { QueryClient } from 'react-query';
 import { QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter } from 'react-router-dom';
 import { Router } from './modules/router';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {useEffect, useState} from "react"
 import {FrontendApi, Configuration, Session, Identity} from "@ory/client"
+import { Button, Typography, Box, Paper } from '@mui/material';
 
 const basePath = process.env.REACT_APP_ORY_URL || "http://localhost:4000"
 const ory = new FrontendApi(
@@ -32,45 +32,55 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const [session, setSession] = useState<Session | undefined>()
-  const [logoutUrl, setLogoutUrl] = useState<string | undefined>()
+  const [session, setSession] = useState<Session | undefined>();
+  const [logoutUrl, setLogoutUrl] = useState<string | undefined>();
 
-  // Returns either the email or the username depending on the user's Identity Schema
-  const getUserName = (identity?: Identity) =>
-    identity?.traits.email || identity?.traits.username
-
-  // Second, gather session data, if the user is not logged in, redirect to login
   useEffect(() => {
     ory
       .toSession()
-      .then(({data}) => {
-        // User has a session!
-        setSession(data)
-        ory.createBrowserLogoutFlow().then(({data}) => {
-          // Get also the logout url
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          setLogoutUrl(data.logout_url)
-        })
+      .then(({ data }) => {
+        setSession(data);
+        return ory.createBrowserLogoutFlow();
+      })
+      .then(({ data }) => {
+        setLogoutUrl(data.logout_url);
       })
       .catch((err) => {
-        console.error(err)
-        // Redirect to login page
-        window.location.replace(`${basePath}/ui/login`)
-      })
-  }, [])
+        console.error('Session or logout flow error:', err);
+        window.location.replace(`${basePath}/ui/login`);
+      });
+  }, []);
 
   if (!session) {
-    // Still loading
-    return <h1>Loading...</h1>
+    return <h1>Loading...</h1>;
   }
+
+  const handleLogout = () => {
+    if (logoutUrl) {
+      window.location.href = logoutUrl;
+    } else {
+      console.error('Logout URL is undefined.');
+      // Optional: Redirect to the login page or show an error message
+      // window.location.href = '/login'; // Specify your login route or home route
+    }
+  };
 
   dayjs.locale('ru');
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Router/>
-          <ReactQueryDevtools initialIsOpen={false}/>
+          <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 1000 }}>
+            <Paper sx={{ padding: 0.3, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', backgroundColor: '#f7f7f7' }}>
+              <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                {session.identity ? `${session.identity.traits.email}` : "Loading..."}
+              </Typography>
+              <Button variant="outlined" size="small" onClick={handleLogout} sx={{ textTransform: 'none' }}>
+                Logout
+              </Button>
+            </Paper>
+          </Box>
+          <Router />
         </BrowserRouter>
       </QueryClientProvider>
     </LocalizationProvider>

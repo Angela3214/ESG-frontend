@@ -4,15 +4,18 @@ import { NavLink } from 'react-router-dom';
 
 export const Header = () => {
   return (
-    <header className="z-10 sticky top-0 flex justify-between gap-12 bg-main py-5 px-24 select-none w-full">
-      <div className="flex justify-center items-center gap-4">
-        <Logo version="minimized" size={44} />
-        <div className="text-white text-xl">
-          Индекс этичности на основе искусственного интеллекта
-        </div>
+    <aside className="sticky top-0 h-screen bg-main py-5 px-2 w-64">
+      <div className="gap-4 mb-10 w-64">
+        <Logo version="minimized" size={60} />
       </div>
-      <div className="flex items-center gap-4">
-        <div style={{ maxWidth: 300, display: 'inline-block' }} className="text-white">
+      <div className="items-start gap-4">
+        <div className="text-white w-full">
+          <ul>
+            <li><StyledLink to="../companies/" text="Компании" /></li>
+          </ul>
+          <ul>
+            <li><StyledLink to="../one_company" text="Анализ одной компании" /></li>
+          </ul>
           Индекс этичности по отзывам
           <ul>
             <li><StyledLink to="../" text="Общая статистика" /></li>
@@ -20,7 +23,7 @@ export const Header = () => {
             <li><StyledLink to="../company/" text="Анализ компании" /></li>
           </ul>
         </div>
-        <div style={{ maxWidth: 300, display: 'inline-block' }} className="text-white">
+        <div className="text-white">
           Рейтинг ESG по отчетам
           <ul>
             <li><StyledLink to='../' text='Общая статистика' /></li>
@@ -29,7 +32,7 @@ export const Header = () => {
           </ul>
         </div>
       </div>
-    </header>
+    </aside>
   );
 };
 
@@ -45,3 +48,4 @@ const StyledLink: FC<StyledLinkProps> = ({ to, text }) => {
     </NavLink>
   );
 };
+

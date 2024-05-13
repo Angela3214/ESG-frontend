@@ -7,7 +7,7 @@ import { Views } from './generated/Views';
 import { Topsis } from './generated/Topsis';
 
 const configuration = {
-  baseUrl: 'https://service-index-ai.ethics.hse.ru',
+  baseUrl: 'http://localhost:3000/api',
 };
 
 export const AggregateController = new Views(configuration);

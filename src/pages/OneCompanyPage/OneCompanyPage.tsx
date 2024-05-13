@@ -6,7 +6,7 @@ import { Button, CircularProgress } from '@mui/material';
 import { Select } from '../../components/Select';
 import { availableYears, topsisFieldItems, topsisIndexItems } from '../../lib/const';
 import { LineChart } from '../../modules/line-chart';
-import { formatChartData } from './helpers';
+import { formatTableData } from './helpers';
 import { noop } from '../../lib/helpers';
 import { Autocomplete } from '../../components/Autocomplete';
 import {
@@ -19,10 +19,10 @@ import {
   useGetTopsisQuery, useGetTopsisNotRsppCompaniesQuery,
 } from '../../api/queries/topsis';
 
-export const TopsisComparisonPage = () => {
+export const OneCompanyPage = () => {
   const [selectedFields, setSelectedFields] = useState<ITopsisCompanyType[]>([]);
-  const [selectedRspp, setSelectedBanks] = useState<IGetTopsisCompaniesResponseItem[]>([]);
-  const [selectedNotRspp, setSelectedBrokers] = useState<IGetTopsisCompaniesResponseItem[]>([]);
+  const [selectedRspp, setSelectedRspp] = useState<IGetTopsisCompaniesResponseItem[]>([]);
+  const [selectedNotRspp, setSelectedNotRspp] = useState<IGetTopsisCompaniesResponseItem[]>([]);
   const [selectedStartYear, setSelectedStartYear] = useState<string[]>([]);
   const [selectedEndYear, setSelectedEndYear] = useState<string[]>([]);
   const [selectedIndexType, setSelectedIndexType] = useState<string[]>([]);
@@ -39,14 +39,11 @@ export const TopsisComparisonPage = () => {
       ...(selectedFields[0] === ITopsisCompanyType.Rspp ? selectedRspp.map(({ id }) => id) : []),
       ...(selectedFields[0] === ITopsisCompanyType.NonRspp ? selectedNotRspp.map(({ id }) => id) : []),
     ],
-    aggregate_types: selectedIndexType as ITopsisAggregateType[],
-    year_start: selectedStartYear[0] ? Number(selectedStartYear[0]) : undefined,
-    year_end: selectedEndYear[0] ? Number(selectedEndYear[0]) : undefined,
+    aggregate_types: [selectedIndexType[0] as ITopsisAggregateType],
   });
 
-  console.log(topsisData);
-  const chartData = useMemo(() => {
-    if (topsisData) return formatChartData(topsisData.data);
+  const tableData = useMemo(() => {
+    if (topsisData) return formatTableData(topsisData.data);
     return null;
   }, [topsisData]);
 
@@ -61,6 +58,7 @@ export const TopsisComparisonPage = () => {
     (selectedFields[0] === ITopsisCompanyType.NonRspp && selectedNotRspp.length === 0) ||
     selectedIndexType.length === 0;
 
+  console.log(topsisData);
   return (
     <div>
       <div className="text-4xl mt-4 font-semibold">Анализ одной компании</div>
@@ -80,7 +78,7 @@ export const TopsisComparisonPage = () => {
             disabled
             selectedValue={[]}
             onChange={noop}
-            label="Компания (выбор одной)"
+            label="Компания (выбор до 5 шт.)"
             labelId="mock"
             items={[]}
             itemToString={() => ''}
@@ -89,53 +87,35 @@ export const TopsisComparisonPage = () => {
         )}
         {selectedFields[0] === ITopsisCompanyType.Rspp && (
           <Autocomplete
-            multiple={false}
+            multiple={true}
             id="rspp"
-            label="Компания (выбор одной)"
+            label="Компания (выбор до 5 шт.)"
             selectedValue={selectedRspp}
             items={rsppData?.data ?? []}
             itemToString={(rspp) => rspp.name}
-            onChange={setSelectedBanks}
+            onChange={setSelectedRspp}
           />
         )}
         {selectedFields[0] === ITopsisCompanyType.NonRspp && (
           <Autocomplete
-            multiple={false}
+            multiple={true}
             id="not_rspp"
-            label="Компания (выбор одной)"
+            label="Компания (выбор до 5 шт.)"
             selectedValue={selectedNotRspp}
             items={notRsppData?.data ?? []}
             itemToString={(notRspp) => notRspp.name}
-            onChange={setSelectedBrokers}
+            onChange={setSelectedNotRspp}
           />
         )}
         <Select
-          multiple={true}
+          multiple={false}
           selectedValue={selectedIndexType}
           onChange={setSelectedIndexType}
-          label="Тип индекса (выбор до 5 шт.)"
+          label="Тип индекса"
           labelId="indexType"
           items={topsisIndexItems}
           itemToString={(companyType) => companyType.name}
           itemToValue={(companyType) => companyType.id}
-        />
-        <Select
-          selectedValue={selectedStartYear}
-          onChange={setSelectedStartYear}
-          label="Первый год"
-          labelId="startYear"
-          items={availableYears}
-          itemToString={(year) => String(year)}
-          itemToValue={(year) => String(year)}
-        />
-        <Select
-          selectedValue={selectedEndYear}
-          onChange={setSelectedEndYear}
-          label="Последний год"
-          labelId="endYear"
-          items={availableYears}
-          itemToString={(year) => String(year)}
-          itemToValue={(year) => String(year)}
         />
       </div>
       <div className="mt-4">
@@ -147,19 +127,31 @@ export const TopsisComparisonPage = () => {
           Обновить данные
         </Button>
       </div>
-      {loading && (
-        <div className="mt-[100px] flex justify-center">
-          <CircularProgress />
-        </div>
-      )}
-      {!loading && (
+      {loading ? (
+        <CircularProgress />
+      ) : (
         <div className="w-full mt-4">
-          {chartData && chartData.labels?.length === 0 ? (
+          {tableData && tableData.length > 0 ? (
+            <table>
+              <thead>
+              <tr>
+                <th>Year</th>
+                <th>Value</th>
+              </tr>
+              </thead>
+              <tbody>
+              {tableData.map((row, index) => (
+                <tr key={index}>
+                  <td>{row.year}</td>
+                  <td>{row.value}</td>
+                </tr>
+              ))}
+              </tbody>
+            </table>
+          ) : (
             <div className="flex justify-center mt-[100px] text-xl">
               Нет данных по выбранным параметрам
             </div>
-          ) : (
-            <>{chartData && <LineChart title="" chartData={chartData} />}</>
           )}
         </div>
       )}

@@ -28,13 +28,13 @@ export class Topsis<SecurityDataType = unknown> extends HttpClient<SecurityDataT
    * No description
    *
    * @tags topsis
-   * @name GetTopsisTopsisTopsisGet
+   * @name GetTopsisTopsisTopsisEsgGet
    * @summary Get Topsis
    * @request GET:/topsis/topsis
    */
   getTopsisTopsisTopsisGet = (query: IGetTopsisTopsisTopsisGetParams, params: RequestParams = {}) =>
     this.request<IGetTopsisResponse, IHTTPValidationError>({
-      path: `/topsis/topsis`,
+      path: `/topsis/topsis/esg`,
       method: 'GET',
       query: query,
       format: 'json',
@@ -50,7 +50,7 @@ export class Topsis<SecurityDataType = unknown> extends HttpClient<SecurityDataT
    */
   postTopsisTopsisTopsisPost = (data: IPostTopsisRequest, params: RequestParams = {}) =>
     this.request<IPostTopsisResponse, IHTTPValidationError>({
-      path: `/topsis/topsis`,
+      path: `/topsis/topsis/esg`,
       method: 'POST',
       body: data,
       type: ContentType.Json,

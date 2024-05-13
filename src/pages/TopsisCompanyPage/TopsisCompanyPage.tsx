@@ -30,9 +30,6 @@ export const TopsisCompanyPage = () => {
   const {data: rsppData, isLoading: loadingRspp} = useGetTopsisRsppCompaniesQuery();
   const {data: notRsppData, isLoading: loadingNotRspp} = useGetTopsisNotRsppCompaniesQuery();
 
-  console.log("rsppData", rsppData)
-  console.log("notRsppData", notRsppData)
-
   const {
     data: topsisData,
     isLoading: isLoadingTopsisData,
@@ -63,6 +60,7 @@ export const TopsisCompanyPage = () => {
     (selectedFields[0] === ITopsisCompanyType.NonRspp && selectedNotRspp.length === 0) ||
     selectedIndexType.length === 0;
 
+  console.log(topsisData);
   return (
     <div>
       <div className="text-4xl mt-4 font-semibold">Анализ одной компании</div>

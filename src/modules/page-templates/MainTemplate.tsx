@@ -7,9 +7,9 @@ type MainTemplateProps = {
 
 export const MainTemplate: FC<MainTemplateProps> = ({ children }) => {
   return (
-    <main className="w-full h-full">
+    <main className="w-full h-full flex">
       <Header />
-      <div className="py-5 px-24">{children}</div>
+      <div className="py-5 px-2">{children}</div>
     </main>
   );
 };
