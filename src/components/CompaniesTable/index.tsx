@@ -1,24 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo} from 'react';
 import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  OutlinedInput,
-  Checkbox,
-  ListItemText,
-  Typography,
-  Box,
-  TextField,
+  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  Typography, Box, TextField, Button, TablePagination, FormGroup, Chip
 } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
 
 interface Company {
   name: string;
@@ -31,84 +15,106 @@ interface CompaniesTableProps {
 
 const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => {
   const allTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(allTypes);
+  const [activeTypes, setActiveTypes] = useState<string[]>(allTypes);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortConfig, setSortConfig] = useState<{ field: 'name' | 'type'; direction: 'asc' | 'desc' }>({ field: 'name', direction: 'asc' });
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(0);
 
-  const handleFilterChange = (event: SelectChangeEvent<typeof selectedTypes>) => {
-    const value = event.target.value;
-    setSelectedTypes(typeof value === 'string' ? value.split(',') : value);
+  const handleToggle = (type: string) => {
+    setActiveTypes(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
+    );
   };
 
-  const cleanString = (str: string) => {
-    return str.replace(/[^а-яА-Яa-zA-Z]/g, '').toLowerCase();
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const normalizeString = (str: string) => {
+    return str.toLowerCase().replace(/[^а-яА-Яa-zA-Z]/g, '');  // Remove non-alphanumeric characters and convert to lower case
+  };
+
+  const changeSort = (field: 'name' | 'type') => {
+    if (sortConfig.field === field) {
+      setSortConfig({ ...sortConfig, direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' });
+    } else {
+      setSortConfig({ field: field, direction: 'asc' });
+    }
   };
 
   const filteredAndSortedCompanies = useMemo(() => {
-    const filteredByType = companies.filter(company => selectedTypes.includes(company.type));
-    const filteredByNameAndType = filteredByType.filter(company =>
-      company.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    return filteredByNameAndType.sort((a, b) => {
-      const nameA = cleanString(a.name);
-      const nameB = cleanString(b.name);
-      if (nameA < nameB) return sortDirection === 'asc' ? -1 : 1;
-      if (nameA > nameB) return sortDirection === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [companies, selectedTypes, searchTerm, sortDirection]);
+    return companies
+      .filter(company =>activeTypes.includes(company.type) && company.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .sort((a, b) => {
+        const valA = normalizeString(a[sortConfig.field]);
+        const valB = normalizeString(b[sortConfig.field]);
+        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [companies, activeTypes, searchTerm, sortConfig]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Box display="flex" justifyContent="flex-end" width="100%" mt={2} marginBottom="16px">
+      <Box display="flex" justifyContent="flex-start" width="100%" mt={2} marginBottom="16px">
         <TextField
           label="Поиск по названию компании"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ width: '300px' }}
+          sx={{ flexGrow: 1, maxWidth: '300px' }} // Adapts to space available but does not exceed 300px
         />
       </Box>
-      <FormControl variant="outlined" sx={{ minWidth: '240px', width: '700px', margin: '16px 0' }}>
-        <InputLabel id="filter-label">Фильтр по отрасли</InputLabel>
-        <Select
-          labelId="filter-label"
-          id="filter-select"
-          multiple
-          value={selectedTypes}
-          onChange={handleFilterChange}
-          input={<OutlinedInput label="Фильтр по отрасли" />}
-          renderValue={(selected) => selected.join(', ')}
-        >
-          {allTypes.map((type) => (
-            <MenuItem key={type} value={type}>
-              <Checkbox checked={selectedTypes.indexOf(type) > -1} />
-              <ListItemText primary={type} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <TableContainer component={Paper} sx={{ width: '1550px', border: '1px solid black', overflowX: 'auto' }}>
-        <Table sx={{ minWidth: '1550px', border: '1px solid black' }}>
+      <FormGroup row sx={{ justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+        {allTypes.map((type, index) => (
+          <Chip
+            key={index}
+            label={type}
+            onClick={() => handleToggle(type)}
+            color={activeTypes.includes(type) ? "primary" : "default"}
+            sx={{
+              margin: '5px',
+              border: activeTypes.includes(type) ? 'none' : '1px solid #1976d2',
+              backgroundColor: activeTypes.includes(type) ? '#1976d2' : '#fff',
+              color: activeTypes.includes(type) ? '#fff' : '#1976d2',
+              '&:hover': {
+                backgroundColor: activeTypes.includes(type) ? '#115293' : '#eee',
+              },
+            }}
+          />
+        ))}
+      </FormGroup>
+      <TableContainer component={Paper} sx={{ width: '900px', border: '1px solid black', overflowX: 'auto' }}>
+        <Table sx={{ border: '1px solid black' }}>
           <TableHead sx={{ backgroundColor: '#f2f2f2' }}>
             <TableRow>
-              <TableCell sx={{ border: '1px solid black', width: '50%' }}>
+              <TableCell sx={{ border: '1px solid black', width: '70%' }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   Название компании
-                  <button onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}>
-                    {sortDirection === 'asc' ? '▲' : '▼'}
-                  </button>
+                  <Button onClick={() => changeSort('name')} style={{ color: sortConfig.field === 'name' ? 'blue' : 'gray' }}>
+                    {sortConfig.field === 'name' && sortConfig.direction === 'asc' ? '▲' : '▼'}
+                  </Button>
                 </Typography>
               </TableCell>
-              <TableCell sx={{ border: '1px solid black', width: '50%' }}>
-                <Typography variant="subtitle1" fontWeight="bold">Отрасль</Typography>
+              <TableCell sx={{ border: '1px solid black', width: '30%' }}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Отрасль
+                  <Button onClick={() => changeSort('type')} style={{ color: sortConfig.field === 'type' ? 'blue' : 'gray' }}>
+                    {sortConfig.field === 'type' && sortConfig.direction === 'asc' ? '▲' : '▼'}
+                  </Button>
+                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredAndSortedCompanies.map((company, index) => (
+            {filteredAndSortedCompanies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((company, index) => (
               <TableRow key={index}>
                 <TableCell sx={{ border: '1px solid black' }}>{company.name}</TableCell>
                 <TableCell sx={{ border: '1px solid black' }}>{company.type}</TableCell>
@@ -117,6 +123,21 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[]}
+        component="div"
+        count={filteredAndSortedCompanies.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count}`}  // Custom label without rows per page
+        sx={{
+          '.MuiTablePagination-selectLabel, .MuiTablePagination-select': {
+            display: 'none',  // Hide rows per page selection UI
+          }
+        }}
+      />
     </div>
   );
 };
