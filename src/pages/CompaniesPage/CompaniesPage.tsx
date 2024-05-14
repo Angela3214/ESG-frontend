@@ -19,12 +19,14 @@ export const CompaniesPage = () => {
     return [...banks, ...brokers, ...mfos, ...insurances];
   }, [banksData, brokersData, mfoData, insurancesData]);
 
+  const allTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
+
   if (isLoading) return <CircularProgress />;
 
   return (
     <div>
       <div className="text-4xl mt-4 font-semibold">Список компаний</div>
-      <CompaniesTable companies={companies} />
+      <CompaniesTable companies={companies} allTypes={allTypes} />
     </div>
   );
 };

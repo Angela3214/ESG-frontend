@@ -11,10 +11,10 @@ interface Company {
 
 interface CompaniesTableProps {
   companies: Company[];
+  allTypes: string[];
 }
 
-const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => {
-  const allTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
+const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTypes}) => {
   const [activeTypes, setActiveTypes] = useState<string[]>(allTypes);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortConfig, setSortConfig] = useState<{ field: 'name' | 'type'; direction: 'asc' | 'desc' }>({ field: 'name', direction: 'asc' });
@@ -50,13 +50,16 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => {
 
   const filteredAndSortedCompanies = useMemo(() => {
     return companies
-      .filter(company =>activeTypes.includes(company.type) && company.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter(company => activeTypes.includes(company.type) && company.name.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => {
-        const valA = normalizeString(a[sortConfig.field]);
-        const valB = normalizeString(b[sortConfig.field]);
-        if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
+        const primaryFieldA = normalizeString(a[sortConfig.field]);
+        const primaryFieldB = normalizeString(b[sortConfig.field]);
+        const secondaryFieldA = normalizeString(a[sortConfig.field === 'type' ? 'name' : 'type']);
+        const secondaryFieldB = normalizeString(b[sortConfig.field === 'type' ? 'name' : 'type']);
+        if (primaryFieldA === primaryFieldB) {
+          return (secondaryFieldA < secondaryFieldB ? -1 : 1) * (sortConfig.direction === 'asc' ? 1 : -1);
+        }
+        return (primaryFieldA < primaryFieldB ? -1 : 1) * (sortConfig.direction === 'asc' ? 1 : -1);
       });
   }, [companies, activeTypes, searchTerm, sortConfig]);
 
@@ -134,7 +137,7 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies }) => {
         labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count}`}  // Custom label without rows per page
         sx={{
           '.MuiTablePagination-selectLabel, .MuiTablePagination-select': {
-            display: 'none',  // Hide rows per page selection UI
+            display: 'none',
           }
         }}
       />
