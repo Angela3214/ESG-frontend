@@ -208,6 +208,21 @@ export interface IGetTopsisResponseItem {
    * @example 0.5
    */
   value: number;
+  /**
+   * Environment
+   * @example 0.5
+   */
+  environmental: number;
+  /**
+   * Social
+   * @example 0.5
+   */
+  social: number;
+  /**
+   * Governance
+   * @example 0.5
+   */
+  governance: number;
   /** @example "average" */
   aggregate_type: ITopsisAggregateType;
 }

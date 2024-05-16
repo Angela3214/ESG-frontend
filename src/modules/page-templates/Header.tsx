@@ -14,7 +14,7 @@ export const Header = () => {
             <li><StyledLink to="../companies/" text="Компании" /></li>
           </ul>
           <ul>
-            <li><StyledLink to="../one_company" text="Анализ одной компании" /></li>
+            <li><StyledLink to="../one_company" text="Рейтинги и индекс компании" /></li>
           </ul>
           Индекс этичности по отзывам
           <ul>
