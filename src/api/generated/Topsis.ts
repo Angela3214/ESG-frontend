@@ -30,7 +30,7 @@ export class Topsis<SecurityDataType = unknown> extends HttpClient<SecurityDataT
    * @tags topsis
    * @name GetTopsisTopsisTopsisEsgGet
    * @summary Get Topsis
-   * @request GET:/topsis/topsis
+   * @request GET:/topsis/topsis/esg
    */
   getTopsisTopsisTopsisGet = (query: IGetTopsisTopsisTopsisGetParams, params: RequestParams = {}) =>
     this.request<IGetTopsisResponse, IHTTPValidationError>({
@@ -46,7 +46,7 @@ export class Topsis<SecurityDataType = unknown> extends HttpClient<SecurityDataT
    * @tags topsis
    * @name PostTopsisTopsisTopsisPost
    * @summary Post Topsis
-   * @request POST:/topsis/topsis
+   * @request POST:/topsis/topsis/esg
    */
   postTopsisTopsisTopsisPost = (data: IPostTopsisRequest, params: RequestParams = {}) =>
     this.request<IPostTopsisResponse, IHTTPValidationError>({

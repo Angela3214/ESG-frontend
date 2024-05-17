@@ -72,7 +72,7 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTypes}) =
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ flexGrow: 1, maxWidth: '300px' }} // Adapts to space available but does not exceed 300px
+          sx={{ flexGrow: 1, maxWidth: '300px' }}
         />
       </Box>
       <FormGroup row sx={{ justifyContent: 'flex-start', flexWrap: 'wrap' }}>

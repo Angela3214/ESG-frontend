@@ -10,14 +10,14 @@ export const Header = () => {
       </div>
       <div className="items-start gap-4">
         <div className="text-white w-full">
-          <ul>
+          <ul className="w-full">
             <li><StyledLink to="../companies/" text="Компании" /></li>
           </ul>
           <ul>
-            <li><StyledLink to="../one_company" text="Рейтинги и индекс компании" /></li>
+            <li><StyledLink to="../one_company" text="Таблица" /></li>
           </ul>
           Индекс этичности по отзывам
-          <ul>
+          <ul className="w-full">
             <li><StyledLink to="../" text="Общая статистика" /></li>
             <li><StyledLink to="../comparison/" text="Сравнение компаний" /></li>
             <li><StyledLink to="../company/" text="Анализ компании" /></li>
@@ -25,7 +25,7 @@ export const Header = () => {
         </div>
         <div className="text-white">
           Рейтинг ESG по отчетам
-          <ul>
+          <ul className="w-full">
             <li><StyledLink to='../' text='Общая статистика' /></li>
             <li><StyledLink to='../topsis_company/' text='Сравнение компаний' /></li>
             <li><StyledLink to='../topsis_comparison/' text='Анализ компании' /></li>
@@ -43,9 +43,8 @@ type StyledLinkProps = {
 
 const StyledLink: FC<StyledLinkProps> = ({ to, text }) => {
   return (
-    <NavLink to={to} className="text-white">
+    <NavLink to={to} className="text-white p-2 border border-white rounded hover:bg-gray-200 hover:text-black block w-full text-left">
       {text}
     </NavLink>
   );
 };
-
