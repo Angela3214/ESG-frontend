@@ -60,7 +60,7 @@ export const OneCompanyPage = () => {
   console.log(topsisData);
   return (
     <div>
-      <div className="text-4xl mt-4 font-semibold">Рейтинги и индекс компании</div>
+      <div className="text-4xl mt-4 font-semibold">Рейтинги компании</div>
       <div className="flex mt-8 gap-4">
         <Select
           selectedValue={selectedFields}
