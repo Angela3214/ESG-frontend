@@ -17,6 +17,6 @@ app.use('/api', createProxyMiddleware({
   pathRewrite: { '^/api': '/' }
 }));
 
-app.listen(3000, () => {
-  console.log('Proxy server running on http://localhost:3000/api');
+app.listen(3001, () => {
+  console.log('Proxy server running on http://localhost:3001/api');
 });
