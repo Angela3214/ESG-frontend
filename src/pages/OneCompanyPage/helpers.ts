@@ -1,4 +1,4 @@
-import { IGetTopsisResponseItem } from '../../api/generated/data-contracts';
+import { IGetTopsisWithESGResponseItem } from '../../api/generated/data-contracts';
 import { groupBy } from '../../lib/helpers';
 
 type TableData = {
@@ -12,7 +12,7 @@ type TableData = {
   governance: string;
 }[];
 
-export const formatTableData = (aggregatedData: IGetTopsisResponseItem[]): TableData => {
+export const formatTableData = (aggregatedData: IGetTopsisWithESGResponseItem[]): TableData => {
   const dataGroupedByModelName = groupBy(aggregatedData, 'company_name');
   const tableData: TableData = [];
 

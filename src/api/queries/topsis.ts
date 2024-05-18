@@ -1,13 +1,17 @@
 import { useQuery } from 'react-query';
 import { TopsisController } from '../controllers';
 import {
-  IGetTopsisTopsisTopsisGetParams, ITopsisCompanyType,
+  IGetTopsisTopsisTopsisGetParams, IGetTopsisWithEsgTopsisTopsisEsgGetParams, ITopsisCompanyType,
 } from '../generated/data-contracts';
 
 const TOPSIS_PREFIX = 'TOPSIS_PREFIX';
 
 export function useGetTopsisQuery(params: IGetTopsisTopsisTopsisGetParams) {
   return useQuery([TOPSIS_PREFIX, params], () => TopsisController.getTopsisTopsisTopsisGet(params), { keepPreviousData: true, enabled: true });
+}
+
+export function useGetTopsisEsgQuery(params: IGetTopsisWithEsgTopsisTopsisEsgGetParams) {
+  return useQuery([TOPSIS_PREFIX, params], () => TopsisController.getTopsisWithEsgTopsisTopsisEsgGet(params), { keepPreviousData: true, enabled: true });
 }
 
 export function useGetTopsisRsppCompaniesQuery() {

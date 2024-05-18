@@ -15,6 +15,8 @@ import {
   IGetTopsisCompanyTypeResponse,
   IGetTopsisResponse,
   IGetTopsisTopsisTopsisGetParams,
+  IGetTopsisWithESGResponse,
+  IGetTopsisWithEsgTopsisTopsisEsgGetParams,
   IHTTPValidationError,
   IPostTopsisCompanyRequest,
   IPostTopsisCompanyRequestResponse,
@@ -28,13 +30,13 @@ export class Topsis<SecurityDataType = unknown> extends HttpClient<SecurityDataT
    * No description
    *
    * @tags topsis
-   * @name GetTopsisTopsisTopsisEsgGet
+   * @name GetTopsisTopsisTopsisGet
    * @summary Get Topsis
    * @request GET:/topsis/topsis/esg
    */
   getTopsisTopsisTopsisGet = (query: IGetTopsisTopsisTopsisGetParams, params: RequestParams = {}) =>
     this.request<IGetTopsisResponse, IHTTPValidationError>({
-      path: `/topsis/topsis/esg`,
+      path: `/topsis/topsis`,
       method: 'GET',
       query: query,
       format: 'json',
@@ -50,10 +52,29 @@ export class Topsis<SecurityDataType = unknown> extends HttpClient<SecurityDataT
    */
   postTopsisTopsisTopsisPost = (data: IPostTopsisRequest, params: RequestParams = {}) =>
     this.request<IPostTopsisResponse, IHTTPValidationError>({
-      path: `/topsis/topsis/esg`,
+      path: `/topsis/topsis`,
       method: 'POST',
       body: data,
       type: ContentType.Json,
+      format: 'json',
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags topsis
+   * @name GetTopsisWithEsgTopsisTopsisEsgGet
+   * @summary Get Topsis With Esg
+   * @request GET:/topsis/topsis/esg
+   */
+  getTopsisWithEsgTopsisTopsisEsgGet = (
+    query: IGetTopsisWithEsgTopsisTopsisEsgGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.request<IGetTopsisWithESGResponse, IHTTPValidationError>({
+      path: `/topsis/topsis/esg`,
+      method: 'GET',
+      query: query,
       format: 'json',
       ...params,
     });

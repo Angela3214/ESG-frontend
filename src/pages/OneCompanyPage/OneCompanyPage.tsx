@@ -15,7 +15,7 @@ import {
 } from '../../api/generated/data-contracts';
 import {
   useGetTopsisRsppCompaniesQuery,
-  useGetTopsisQuery, useGetTopsisNotRsppCompaniesQuery,
+  useGetTopsisEsgQuery, useGetTopsisNotRsppCompaniesQuery,
 } from '../../api/queries/topsis';
 
 export const OneCompanyPage = () => {
@@ -31,7 +31,7 @@ export const OneCompanyPage = () => {
     data: topsisData,
     isLoading: isLoadingTopsisData,
     refetch: refetchTopsisData,
-  } = useGetTopsisQuery({
+  } = useGetTopsisEsgQuery({
     company_ids: [
       ...(selectedFields[0] === ITopsisCompanyType.Rspp ? selectedRspp.map(({ id }) => id) : []),
       ...(selectedFields[0] === ITopsisCompanyType.NonRspp ? selectedNotRspp.map(({ id }) => id) : []),
