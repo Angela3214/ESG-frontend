@@ -1,10 +1,20 @@
 /* eslint-disable max-lines */
 /* eslint-disable complexity */
 import React, { useMemo, useState } from 'react';
-import { Button, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 
 import { Select } from '../../components/Select';
-import { topsisFieldItems} from '../../lib/const';
+import { topsisFieldItems } from '../../lib/const';
 import { formatTableData } from './helpers';
 import { noop } from '../../lib/helpers';
 import { Autocomplete } from '../../components/Autocomplete';
@@ -15,8 +25,17 @@ import {
 } from '../../api/generated/data-contracts';
 import {
   useGetTopsisRsppCompaniesQuery,
-  useGetTopsisQuery, useGetTopsisNotRsppCompaniesQuery,
+  useGetTopsisEsgQuery, useGetTopsisNotRsppCompaniesQuery,
 } from '../../api/queries/topsis';
+
+type TableRowData = {
+  companyName: string;
+  year: number;
+  average: string;
+  environmental: string;
+  social: string;
+  governance: string;
+};
 
 export const OneCompanyPage = () => {
   const [selectedFields, setSelectedFields] = useState<ITopsisCompanyType[]>([]);
@@ -24,26 +43,21 @@ export const OneCompanyPage = () => {
   const [selectedNotRspp, setSelectedNotRspp] = useState<IGetTopsisCompaniesResponseItem[]>([]);
   const [selectedIndexType] = useState<string[]>([]);
 
-  const {data: rsppData, isLoading: loadingRspp} = useGetTopsisRsppCompaniesQuery();
-  const {data: notRsppData, isLoading: loadingNotRspp} = useGetTopsisNotRsppCompaniesQuery();
+  const { data: rsppData, isLoading: loadingRspp } = useGetTopsisRsppCompaniesQuery();
+  const { data: notRsppData, isLoading: loadingNotRspp } = useGetTopsisNotRsppCompaniesQuery();
 
   const {
     data: topsisData,
     isLoading: isLoadingTopsisData,
     refetch: refetchTopsisData,
-  } = useGetTopsisQuery({
+  } = useGetTopsisEsgQuery({
     company_ids: [
       ...(selectedFields[0] === ITopsisCompanyType.Rspp ? selectedRspp.map(({ id }) => id) : []),
       ...(selectedFields[0] === ITopsisCompanyType.NonRspp ? selectedNotRspp.map(({ id }) => id) : []),
     ],
-    aggregate_types: [
-      ITopsisAggregateType.Average,
-      ITopsisAggregateType.AllTopics,
-      ITopsisAggregateType.AllLetters
-    ],
+    aggregate_types: [ITopsisAggregateType.Average],
   });
 
-  console.log(topsisData);
   const tableData = useMemo(() => formatTableData(topsisData?.data || []), [topsisData]);
 
   const loading =
@@ -57,7 +71,37 @@ export const OneCompanyPage = () => {
     (selectedFields[0] === ITopsisCompanyType.NonRspp && selectedNotRspp.length === 0) ||
     selectedIndexType.length === 0;
 
-  console.log(topsisData);
+  function getColor(value: number) {
+    if (value >= 0.8) return '#8bc881'; // зелёный
+    if (value >= 0.6) return '#f1f1a1'; // светло-жёлтый
+    if (value >= 0.4) return '#efd64e'; // тёмно-жёлтый
+    if (value >= 0.2) return '#f1788a'; // светло-красный
+    return '#ef3939'; // тёмно-красный
+  }
+
+  type SortConfig = {
+    field: keyof TableRowData;
+    direction: 'asc' | 'desc';
+  };
+
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: 'year', direction: 'desc' });
+
+  const handleSort = (field: keyof TableRowData) => {
+    const isAsc = sortConfig.field === field && sortConfig.direction === 'asc';
+    setSortConfig({ field, direction: isAsc ? 'desc' : 'asc' });
+  };
+
+  const sortedData = useMemo(() => {
+    return [...tableData].sort((a, b) => {
+      const aValue = a[sortConfig.field];
+      const bValue = b[sortConfig.field];
+
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [tableData, sortConfig]);
+
   return (
     <div>
       <div className="text-4xl mt-4 font-semibold">Таблица</div>
@@ -72,7 +116,6 @@ export const OneCompanyPage = () => {
           itemToValue={(item) => item.id}
         />
         {selectedFields.length === 0 && (
-          // Mock Select
           <Select
             disabled
             selectedValue={[]}
@@ -117,35 +160,44 @@ export const OneCompanyPage = () => {
         </Button>
       </div>
       {loading ? <CircularProgress /> : (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Год</TableCell>
-                <TableCell align="right">На буквах</TableCell>
-                <TableCell align="right">На всех топиках</TableCell>
-                <TableCell align="right">Среднее</TableCell>
-                <TableCell align="right">Критерий E</TableCell>
-                <TableCell align="right">Критерий S</TableCell>
-                <TableCell align="right">Критерий G</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tableData.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell component="th" scope="row">{row.year}</TableCell>
-                  <TableCell align="right">{row.allLetters}</TableCell>
-                  <TableCell align="right">{row.allTopics}</TableCell>
-                  <TableCell align="right">{row.average}</TableCell>
-                  <TableCell align="right">{row.environmental}</TableCell>
-                  <TableCell align="right">{row.social}</TableCell>
-                  <TableCell align="right">{row.governance}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div className="flex">
+          <div className="flex-1">
+            <TableContainer component={Paper} sx={{ mt: 1 }}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow sx={{ '& > *': { border: 1, borderColor: 'black' } }}>
+                    <TableCell>
+                      Год
+                      <Button onClick={() => handleSort('year')} style={{ color: sortConfig.field === 'year' ? 'blue' : 'gray' }}>
+                        {sortConfig.field === 'year' && (sortConfig.direction === 'asc' ? '▲' : '▼')}
+                      </Button>
+                    </TableCell>
+                    <TableCell align="right">Среднее</TableCell>
+                    <TableCell align="right">Критерий E</TableCell>
+                    <TableCell align="right">Критерий S</TableCell>
+                    <TableCell align="right">Критерий G</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {sortedData.map((row, index) => (
+                    <TableRow key={index} sx={{ '& > *': { border: 1, borderColor: 'black' } }}>
+                      <TableCell component="th" scope="row">{row.year}</TableCell>
+                      <TableCell align="right" style={{ backgroundColor: getColor(parseFloat(row.average)) }}>{row.average}</TableCell>
+                      <TableCell align="right" style={{ backgroundColor: getColor(parseFloat(row.environmental)) }}>{row.environmental}</TableCell>
+                      <TableCell align="right" style={{ backgroundColor: getColor(parseFloat(row.social)) }}>{row.social}</TableCell>
+                      <TableCell align="right" style={{ backgroundColor: getColor(parseFloat(row.governance)) }}>{row.governance}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+          <div className="flex-1" style={{ marginLeft: '10px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>Оценка критериев E, S, G</div>
+            <img src="images/rate_esg.png" alt="Оценка критериев E, S, G" />
+          </div>
+        </div>
       )}
     </div>
   );
-};
+}

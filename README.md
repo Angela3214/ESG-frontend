@@ -1,3 +1,8 @@
+To run this web, you need to do
+`docker compose build`
+`docker compose up`
+and you can see ESG platform on localhost:3000
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
