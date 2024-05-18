@@ -6,8 +6,13 @@ import { TextResult } from './generated/TextResult';
 import { Views } from './generated/Views';
 import { Topsis } from './generated/Topsis';
 
-const configuration = {
-  baseUrl: 'http://localhost:3001/api',
+export const configuration = {
+  get baseHostName() {
+    return 'http://localhost:3001';
+  },
+  get baseUrl() {
+    return `${this.baseHostName}/api`;
+  }
 };
 
 export const AggregateController = new Views(configuration);
