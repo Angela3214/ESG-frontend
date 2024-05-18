@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useGetBanksQuery, useGetBrokersQuery, useGetInsurancesQuery, useGetMfoQuery } from '../../api/queries/bank';
-import CompaniesTable from '../../components/CompaniesTable';  // Import the new component
+import { CompaniesTable } from '../../components/CompaniesTable';
+
+export const allCompanyTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
 
 export const allCompanyTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
 
