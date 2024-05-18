@@ -13,7 +13,7 @@ export const Header = () => {
           <ul className="w-full">
             <li><StyledLink to="../companies/" text="Компании" /></li>
           </ul>
-          <ul className="w-full">
+          <ul>
             <li><StyledLink to="../one_company" text="Таблица" /></li>
           </ul>
           Индекс этичности по отзывам
