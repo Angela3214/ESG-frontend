@@ -208,8 +208,40 @@ export interface IGetTopsisResponseItem {
    * @example 0.5
    */
   value: number;
+  /** @example "average" */
+  aggregate_type: ITopsisAggregateType;
+}
+
+/** GetTopsisWithESGResponse */
+export interface IGetTopsisWithESGResponse {
   /**
-   * Environment
+   * Data
+   * @example [{"company_id":1,"company_name":"Company Name","year":2019,"value":0.5,"environmental":0.5,"social":0.5,"governance":0.5}]
+   */
+  data: IGetTopsisWithESGResponseItem[];
+}
+
+/** GetTopsisWithESGResponseItem */
+export interface IGetTopsisWithESGResponseItem {
+  /**
+   * Company Name
+   * @example "Company Name"
+   */
+  company_name: string;
+  /**
+   * Year
+   * @example 2019
+   */
+  year: number;
+  /**
+   * Value
+   * @example 0.5
+   */
+  value: number;
+  /** @example "average" */
+  aggregate_type: ITopsisAggregateType;
+  /**
+   * Environmental
    * @example 0.5
    */
   environmental: number;
@@ -223,8 +255,6 @@ export interface IGetTopsisResponseItem {
    * @example 0.5
    */
   governance: number;
-  /** @example "average" */
-  aggregate_type: ITopsisAggregateType;
 }
 
 /** HTTPValidationError */
@@ -630,7 +660,7 @@ export interface IGetAggregateTextResultViewsAggregateTextResultGetParams {
    * Start Year
    * Первый год рассматриваемого периода
    * @min 1970
-   * @max 2023
+   * @max 2024
    * @default 1970
    */
   start_year?: number;
@@ -638,8 +668,8 @@ export interface IGetAggregateTextResultViewsAggregateTextResultGetParams {
    * End Year
    * Последний год рассматриваемого периода
    * @min 1970
-   * @max 2023
-   * @default 2023
+   * @max 2024
+   * @default 2024
    */
   end_year?: number;
   /**
@@ -669,7 +699,7 @@ export interface IGetReviewsCountViewsReviewsCountGetParams {
    * End Date
    * Конечная дата рассматриваемого периода
    * @format date
-   * @default "2023-12-14"
+   * @default "2024-05-12"
    */
   end_date?: string;
   /**
@@ -693,7 +723,7 @@ export interface IGetTopsisTopsisTopsisGetParams {
   /**
    * Year Start
    * @min 1970
-   * @max 2023
+   * @max 2024
    * @default 1970
    * @example 2019
    */
@@ -701,8 +731,37 @@ export interface IGetTopsisTopsisTopsisGetParams {
   /**
    * Year End
    * @min 1970
-   * @max 2023
-   * @default 2023
+   * @max 2024
+   * @default 2024
+   * @example 2020
+   */
+  year_end?: number;
+}
+
+export interface IGetTopsisWithEsgTopsisTopsisEsgGetParams {
+  /**
+   * Company Ids
+   * @example [1]
+   */
+  company_ids: number[];
+  /**
+   * @uniqueItems true
+   * @example ["average"]
+   */
+  aggregate_types: ITopsisAggregateType[];
+  /**
+   * Year Start
+   * @min 1970
+   * @max 2024
+   * @default 1970
+   * @example 2019
+   */
+  year_start?: number;
+  /**
+   * Year End
+   * @min 1970
+   * @max 2024
+   * @default 2024
    * @example 2020
    */
   year_end?: number;

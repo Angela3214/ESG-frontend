@@ -9,7 +9,7 @@ import { Router } from './modules/router';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {useEffect, useState} from "react"
-import {FrontendApi, Configuration, Session, Identity} from "@ory/client"
+import {FrontendApi, Configuration, Session} from "@ory/client"
 import { Button, Typography, Box, Paper } from '@mui/material';
 
 const basePath = process.env.REACT_APP_ORY_URL || "http://localhost:4000"
