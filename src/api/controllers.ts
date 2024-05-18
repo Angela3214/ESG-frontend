@@ -7,7 +7,7 @@ import { Views } from './generated/Views';
 import { Topsis } from './generated/Topsis';
 
 const configuration = {
-  baseUrl: 'http://localhost:3000/api',
+  baseUrl: 'http://localhost:3001/api',
 };
 
 export const AggregateController = new Views(configuration);

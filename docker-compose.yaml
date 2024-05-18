@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  cors-proxy:
+    build:
+      context: .
+      dockerfile: my-proxy/Dockerfile
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+  ory:
+    build:
+      context: .
+      dockerfile: ory/Dockerfile
+    ports:
+      - "4000:4000"
