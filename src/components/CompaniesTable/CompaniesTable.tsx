@@ -4,6 +4,12 @@ import {
   Typography, Box, TextField, Button, TablePagination, FormGroup, Chip
 } from '@mui/material';
 
+
+export const companyNameTestId = "table-row-company-name";
+export const companyTypeTestId = "table-row-company-type";
+export const searchPromptLabel = "Поиск по названию компании";
+
+
 interface Company {
   name: string;
   type: string;
@@ -14,7 +20,7 @@ interface CompaniesTableProps {
   allTypes: string[];
 }
 
-const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTypes}) => {
+export const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTypes}) => {
   const [activeTypes, setActiveTypes] = useState<string[]>(allTypes);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortConfig, setSortConfig] = useState<{ field: 'name' | 'type'; direction: 'asc' | 'desc' }>({ field: 'name', direction: 'asc' });
@@ -67,7 +73,7 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTypes}) =
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Box display="flex" justifyContent="flex-start" width="100%" mt={2} marginBottom="16px">
         <TextField
-          label="Поиск по названию компании"
+          label={searchPromptLabel}
           variant="outlined"
           size="small"
           value={searchTerm}
@@ -119,8 +125,8 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTypes}) =
           <TableBody>
             {filteredAndSortedCompanies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((company, index) => (
               <TableRow key={index}>
-                <TableCell sx={{ border: '1px solid black' }}>{company.name}</TableCell>
-                <TableCell sx={{ border: '1px solid black' }}>{company.type}</TableCell>
+                <TableCell data-testid={companyNameTestId} sx={{ border: '1px solid black' }}>{company.name}</TableCell>
+                <TableCell data-testid={companyTypeTestId} sx={{ border: '1px solid black' }}>{company.type}</TableCell>
               </TableRow>
             ))}
           </TableBody>
