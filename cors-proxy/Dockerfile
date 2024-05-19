@@ -1,8 +1,8 @@
 FROM node:16-alpine
 
-COPY my-proxy/package.json .
+COPY cors-proxy/package.json .
 RUN npm install
 
-COPY my-proxy/server.js .
+COPY cors-proxy/server.js .
 
 CMD ["node", "server.js"]

@@ -4,11 +4,10 @@ import {
   Typography, Box, TextField, Button, TablePagination, FormGroup, Chip
 } from '@mui/material';
 
-
 export const companyNameTestId = "table-row-company-name";
 export const companyTypeTestId = "table-row-company-type";
 export const searchPromptLabel = "Поиск по названию компании";
-
+export const sortTypePromptLabel = "Сортировка по отрасли";
 
 interface Company {
   name: string;
@@ -85,6 +84,7 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTy
         {allTypes.map((type, index) => (
           <Chip
             key={index}
+            data-testid={`chip-${type}`}
             label={type}
             onClick={() => handleToggle(type)}
             color={activeTypes.includes(type) ? "primary" : "default"}
@@ -115,7 +115,11 @@ export const CompaniesTable: React.FC<CompaniesTableProps> = ({ companies, allTy
               <TableCell sx={{ border: '1px solid black', width: '30%' }}>
                 <Typography variant="subtitle1" fontWeight="bold">
                   Отрасль
-                  <Button onClick={() => changeSort('type')} style={{ color: sortConfig.field === 'type' ? 'blue' : 'gray' }}>
+                  <Button
+                    onClick={() => changeSort('type')}
+                    style={{ color: sortConfig.field === 'type' ? 'blue' : 'gray' }}
+                    aria-label={sortTypePromptLabel}
+                  >
                     {sortConfig.field === 'type' && sortConfig.direction === 'asc' ? '▲' : '▼'}
                   </Button>
                 </Typography>
