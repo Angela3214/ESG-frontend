@@ -3,7 +3,7 @@ services:
   cors-proxy:
     build:
       context: .
-      dockerfile: my-proxy/Dockerfile
+      dockerfile: cors-proxy/Dockerfile
     ports:
       - "3001:3001"
 

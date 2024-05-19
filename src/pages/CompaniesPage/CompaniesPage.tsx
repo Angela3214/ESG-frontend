@@ -5,8 +5,6 @@ import { CompaniesTable } from '../../components/CompaniesTable';
 
 export const allCompanyTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
 
-export const allCompanyTypes = ['Страховая компания', 'Микрофинансовая организация', 'Брокерская компания', 'Банк'];
-
 export const CompaniesPage = () => {
   const { data: banksData, isLoading: loadingBanks } = useGetBanksQuery();
   const { data: brokersData, isLoading: loadingBrokers } = useGetBrokersQuery();

@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import React from 'react';
 import nock from 'nock';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, Matcher } from '@testing-library/react';
 import { CompaniesPage, allCompanyTypes } from './CompaniesPage';
 import { QueryClientProvider } from 'react-query';
 import { QueryClient } from 'react-query';
@@ -17,9 +17,9 @@ function expectTableSkeletonToBePresent() {
   expect(screen.getByText('Название компании')).toBeInTheDocument();
   expect(screen.getByText('Отрасль')).toBeInTheDocument();
 
-  for (const companyType of allCompanyTypes) {
-    expect(screen.getAllByText(companyType)[0]).toBeInTheDocument();
-  }
+  allCompanyTypes.forEach((companyType) => {
+    expect(screen.getAllByText(companyType as Matcher)[0]).toBeInTheDocument();
+  });
 }
 
 function expectProgressBar() {
@@ -31,9 +31,9 @@ function expectProgressBar() {
   expect(screen.queryByText('Название компании')).not.toBeInTheDocument();
   expect(screen.queryByText('Отрасль')).not.toBeInTheDocument();
 
-  for (const companyType of allCompanyTypes) {
-    expect(screen.queryByText(companyType)).not.toBeInTheDocument();
-  }
+  allCompanyTypes.forEach((companyType) => {
+    expect(screen.queryByText(companyType as Matcher)).not.toBeInTheDocument();
+  });
 }
 
 describe('Companies page', () => {
@@ -63,7 +63,8 @@ describe('Companies page', () => {
   });
 
   test('renders table on errors', async () => {
-    const apiMock = nock(configuration.baseHostName);
+    const baseUrl: string = configuration.baseHostName; // Ensure baseHostName is of type string
+    const apiMock = nock(baseUrl);
     apiMock
       .get('/api/bank/').reply(500)
       .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' });
@@ -90,7 +91,8 @@ describe('Companies page', () => {
   });
 
   test('renders table on empty response', async () => {
-    const apiMock = nock(configuration.baseHostName);
+    const baseUrl: string = configuration.baseHostName; // Ensure baseHostName is of type string
+    const apiMock = nock(baseUrl);
     apiMock
       .get('/api/bank/')
       .reply(200, { 'items': [] }, {
@@ -129,7 +131,8 @@ describe('Companies page', () => {
   });
 
   test('renders all types of banks', async () => {
-    const apiMock = nock(configuration.baseHostName);
+    const baseUrl: string = configuration.baseHostName; // Ensure baseHostName is of type string
+    const apiMock = nock(baseUrl);
     apiMock
       .get('/api/bank/')
       .reply(200, { 'items': [{ 'bank_name': 'THIS_IS_BANK' }] }, {
@@ -172,7 +175,8 @@ describe('Companies page', () => {
   });
 
   test('renders progress bar when on waiting', async () => {
-    const apiMock = nock(configuration.baseHostName);
+    const baseUrl: string = configuration.baseHostName; // Ensure baseHostName is of type string
+    const apiMock = nock(baseUrl);
     apiMock
       .get('/api/bank/')
       .delayConnection(infiniteDelay)
@@ -209,7 +213,8 @@ describe('Companies page', () => {
   });
 
   test('renders table if at least one loads', async () => {
-    const apiMock = nock(configuration.baseHostName);
+    const baseUrl: string = configuration.baseHostName; // Ensure baseHostName is of type string
+    const apiMock = nock(baseUrl);
     apiMock
       .get('/api/bank/')
       .delayConnection(infiniteDelay)
