@@ -42,7 +42,7 @@ export function Autocomplete<T>({
 
   return (
     <div className="w-[250px]">
-      <InputLabel>{label}</InputLabel>
+      <InputLabel htmlFor={id}>{label}</InputLabel>
       <MaterialAutocomplete
         limitTags={limitTags}
         multiple={multiple}
@@ -52,7 +52,7 @@ export function Autocomplete<T>({
         value={multiple ? selectedValue : selectedValue[0]}
         onChange={handleChange}
         getOptionLabel={itemToString}
-        renderInput={(params) => <TextField {...params} />}
+        renderInput={(params) => <TextField {...params} data-testid={id} />}
       />
     </div>
   );

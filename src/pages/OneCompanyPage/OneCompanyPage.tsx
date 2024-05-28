@@ -41,7 +41,6 @@ export const OneCompanyPage = () => {
   const [selectedFields, setSelectedFields] = useState<ITopsisCompanyType[]>([]);
   const [selectedRspp, setSelectedRspp] = useState<IGetTopsisCompaniesResponseItem[]>([]);
   const [selectedNotRspp, setSelectedNotRspp] = useState<IGetTopsisCompaniesResponseItem[]>([]);
-  const [selectedIndexType] = useState<string[]>([]);
 
   const { data: rsppData, isLoading: loadingRspp } = useGetTopsisRsppCompaniesQuery();
   const { data: notRsppData, isLoading: loadingNotRspp } = useGetTopsisNotRsppCompaniesQuery();
@@ -49,7 +48,6 @@ export const OneCompanyPage = () => {
   const {
     data: topsisData,
     isLoading: isLoadingTopsisData,
-    refetch: refetchTopsisData,
   } = useGetTopsisEsgQuery({
     company_ids: [
       ...(selectedFields[0] === ITopsisCompanyType.Rspp ? selectedRspp.map(({ id }) => id) : []),
@@ -64,12 +62,6 @@ export const OneCompanyPage = () => {
     loadingRspp ||
     loadingNotRspp ||
     isLoadingTopsisData;
-
-  const buttonDisabled =
-    loading ||
-    (selectedFields[0] === ITopsisCompanyType.Rspp && selectedRspp.length === 0) ||
-    (selectedFields[0] === ITopsisCompanyType.NonRspp && selectedNotRspp.length === 0) ||
-    selectedIndexType.length === 0;
 
   function getColor(value: number) {
     if (value >= 0.8) return '#8bc881'; // зелёный
@@ -149,15 +141,6 @@ export const OneCompanyPage = () => {
             onChange={setSelectedNotRspp}
           />
         )}
-      </div>
-      <div className="mt-4">
-        <Button
-          disabled={buttonDisabled}
-          variant="contained"
-          onClick={() => refetchTopsisData()}
-        >
-          Обновить данные
-        </Button>
       </div>
       {loading ? <CircularProgress /> : (
         <div className="flex">

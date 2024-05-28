@@ -33,8 +33,6 @@ export const StatisticsPage = () => {
   } = useGetAggregateReviewsCountQuery({
     source_sites: selectedSites,
     aggregate_by: aggregationType,
-    // startDate: startDate?.isValid() ? new Date(startDate.format('YYYY-MM-DD')) : undefined,
-    // endDate: endDate?.isValid() ? new Date(endDate.format('YYYY-MM-DD')) : undefined,
     start_date: startDate?.isValid() ? startDate.format('YYYY-MM-DD') : undefined,
     end_date: endDate?.isValid() ? endDate.format('YYYY-MM-DD') : undefined,
   });
