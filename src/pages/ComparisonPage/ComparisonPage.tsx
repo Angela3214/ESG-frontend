@@ -197,7 +197,7 @@ export const ComparisonPage = () => {
       </div>
       {loading && (
         <div className="mt-[100px] flex justify-center">
-          <CircularProgress />
+          <CircularProgress data-testid="loading" />
         </div>
       )}
       {!loading && (

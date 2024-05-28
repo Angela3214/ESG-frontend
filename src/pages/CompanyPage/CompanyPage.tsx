@@ -20,6 +20,8 @@ import { Autocomplete } from '../../components/Autocomplete';
 import { IBankModel } from '../../api/generated/data-contracts';
 import { GraphDescription } from '../ConstData/GraphText';
 
+export const UpdateDataLabel = "Обновить данные";
+
 export const CompanyPage = () => {
   const [selectedFields, setSelectedFields] = useState<FieldTypes[]>([]);
   const [selectedBanks, setSelectedBanks] = useState<IBankModel[]>([]);
@@ -142,7 +144,7 @@ export const CompanyPage = () => {
           <Autocomplete
             multiple={false}
             id="insurance"
-            label="Компании (выбор одной)"
+            label="Компания (выбор одной)"
             selectedValue={selectedInsurances}
             items={insurancesData?.items ?? []}
             itemToString={(insurance) => insurance.bank_name}
@@ -192,13 +194,14 @@ export const CompanyPage = () => {
           disabled={buttonDisabled}
           variant="contained"
           onClick={() => refetchAggregatedData()}
+          aria-label={UpdateDataLabel}
         >
           Обновить данные
         </Button>
       </div>
       {loading && (
         <div className="mt-[100px] flex justify-center">
-          <CircularProgress />
+          <CircularProgress data-testid="loading" />
         </div>
       )}
       {!loading && (
